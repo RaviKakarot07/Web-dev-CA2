@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title or "Post your Thoughts" }}</title>
+    <!-- FontAwesome -->
+    <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+    <!-- SB Admin 2 CSS -->
+    <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        {% if session.get('user_id') %}
+            {% include 'sidebar.html' %}
+        {% endif %}
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                {% if session.get('user_id') %}
+                    {% include 'topbar.html' %}
+                {% endif %}
+                <div class="container-fluid">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- jQuery & Bootstrap -->
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- SB Admin 2 JS -->
+    <script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
