@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>All Users</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th><th>Username</th><th>Role</th><th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for u in users %}
+        <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.username }}</td>
+            <td>{{ 'Admin' if u.is_admin else 'User' }}</td>
+            <td>
+                {% if not u.is_admin %}
+                <a href="/admin/delete_user/{{ u.id }}" class="btn btn-danger btn-sm">Delete</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
