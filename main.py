@@ -60,3 +60,96 @@ def register():
         return redirect("/login")
 
     return render_template("register.html")
+
+# DASHBOARD (normal user)
+@app.route("/dashboard")
+def dashboard():
+    if "user_id" not in session or session.get("is_admin") == 1:
+        return redirect("/login")
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute(f"SELECT * FROM items WHERE user_id={session['user_id']}")
+    items = cur.fetchall()
+
+    return render_template("dashboard.html", username=session["username"], items=items, total_items=len(items))
+
+# ADD ITEM
+@app.route("/add", methods=["GET", "POST"])
+def add_item():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    if request.method == "POST":
+        title = request.form["title"]
+        content = request.form["content"]
+
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("INSERT INTO items (user_id, title, content) VALUES (?, ?, ?)",
+                    (session["user_id"], title, content))
+        conn.commit()
+
+        return redirect("/dashboard")
+
+    return render_template("add_item.html")
+
+# VIEW RECORD
+@app.route("/view/<item_id>")
+def view(item_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        f"SELECT items.*, users.username FROM items "
+        f"JOIN users ON users.id = items.user_id WHERE items.id={item_id}"
+    )
+    record = cur.fetchone()
+
+    return render_template("view_record.html", record=record)
+
+# EDIT ITEM
+@app.route("/edit/<item_id>", methods=["GET", "POST"])
+def edit_item(item_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(f"SELECT * FROM items WHERE id={item_id}")
+    item = cur.fetchone()
+
+    if request.method == "POST":
+        title = request.form["title"]
+        content = request.form["content"]
+
+        cur.execute(f"UPDATE items SET title='{title}', content='{content}' WHERE id={item_id}")
+        conn.commit()
+
+        # admin returns to admin post list
+        if session.get("is_admin") == 1:
+            return redirect("/admin/posts")
+
+        return redirect("/dashboard")
+
+    return render_template("edit.html", rec=item)
+
+# DELETE ITEM
+@app.route("/delete/<item_id>")
+def delete_item(item_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM items WHERE id={item_id}")
+    conn.commit()
+
+    if session.get("is_admin") == 1:
+        return redirect("/admin/posts")
+
+    return redirect("/dashboard")
+
