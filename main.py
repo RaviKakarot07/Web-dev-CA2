@@ -152,4 +152,61 @@ def delete_item(item_id):
         return redirect("/admin/posts")
 
     return redirect("/dashboard")
+    
+# ADMIN PANEL – list all posts
+@app.route("/admin")
+def admin_panel():
+    if not session.get("is_admin"):
+        return "Admins only"
+
+    return render_template("admin_home.html")
+
+@app.route("/admin/posts")
+def admin_posts():
+    if not session.get("is_admin"):
+        return redirect("/login")
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT items.id, items.title, items.content, users.username "
+        "FROM items JOIN users ON items.user_id = users.id"
+    )
+    posts = cur.fetchall()
+
+    return render_template("admin_posts.html", posts=posts)
+
+# ADMIN – USERS LIST
+@app.route("/admin/users")
+def admin_users():
+    if not session.get("is_admin"):
+        return redirect("/login")
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT id, username, is_admin FROM users")
+    users = cur.fetchall()
+
+    return render_template("admin_users.html", users=users)
+
+# ADMIN DELETE USER
+@app.route("/admin/delete_user/<uid>")
+def admin_delete_user(uid):
+    if not session.get("is_admin"):
+        return redirect("/login")
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM users WHERE id={uid}")
+    conn.commit()
+
+    return redirect("/admin/users")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
+
+
+app.run(debug=True)
 
