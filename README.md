@@ -38,9 +38,20 @@ OR - use --> admin' --  in username and anything as password. -- classic auth by
 3. On a user login, inject this into the url -->  ' UNION SELECT users.id, users.username, users.password, users.id, users.username FROM users LIMIT 1 OFFSET 0' OR ' UNION SELECT users.id, users.username, users.password, users.id, users.username FROM users LIMIT 1 OFFSET 1'
 This will leak the user id and password for the users sequentially -- Dump users by SQL injection in endpoints
  
-5. Create a post in any user account as -- content = <script>alert('XSS attack ! Attacker can send the session cookie to their machine. ');</script>
+4. Create a post in any user account as -- content = <script>alert('XSS attack ! Attacker can send the session cookie to their machine. ');</script>
  Classic XSS since the view content mode has XSS sink enabled ( | safe )
 
-To Fix the code we will make changes in the main.py code to secure the webapp. 
+To Fix the code we will make changes in some of our code to secure the webapp. 
+There are files called 'safe.py' & 'safe_db.py' within the repository which have a secure version of the code for the webapp. Copy the contents of these files into the main files of our project and we now have a secure version of the webapp.
+
+The below are the changes made within the code -
+
+1. A strong secret key is intialised within the flask environment which generates a 32-bit hashed key.
+2. Session cookies are set for 'HTTP = true, secure = false & samesite = Lax', which define the secure parameters.
+3. Implementing a parameterised query which restricts the login lookup to only username -- "SELECT * FROM users WHERE username = ?"
+4. Use hashed passwords via 'werkzeug.security' and configurable initial admin from the safe_db.py file.
+5. Check items.user_id == session['user_id'] for non-admins before view/edit/delete, which eradicate the IDOR issue.
+6. Removed ( | safe ) parameter from view_record which will prevent XSS.
+7. Error handling is implemented which redirects / 403 responses and flash messages.
 
 
