@@ -28,6 +28,7 @@ The CSS and JS files from the template are compliled within the 'static' folder.
 9. All the requirements of the project are now met and we can now run the 'main.py' file to host our website. Upon running the file we see that the python gives us a weblink where our webapp will be hosted.
 10. Open the Link, and we land on the login page of our webapp.
 
+## Vulnerability !
 We now have a working website which an user can interact with. The Current code is Vulnerable and can be exploited. 
 The below exploits can be leveraged -
 1. In the username field on login page, type ---> ' OR 1=1--  with any password to directly gain admin access. [SQL injection]
