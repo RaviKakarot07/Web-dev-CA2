@@ -31,15 +31,15 @@ The CSS and JS files from the template are compliled within the 'static' folder.
 ## Vulnerability !
 We now have a working website which an user can interact with. The Current code is Vulnerable and can be exploited. 
 The below exploits can be leveraged -
-1. In the username field on login page, type ---> ' OR 1=1--  with any password to directly gain admin access. [SQL injection]
-OR - use --> admin' --  in username and anything as password. -- classic auth bypass.
+1. In the username field on login page, type ---> **' OR 1=1--**  with any password to directly gain admin access. [SQL injection]
+OR - use --> **admin' --**  in username and anything as password. -- classic auth bypass.
 
-2. After logging in from a user account, change the part after view in ' http://127.0.0.1:5000/view/3 ' -- this allows to view posts of any user -- IDOR / broken access control
+2. After logging in from a user account, change the part after view in ' **http://127.0.0.1:5000/view/3** ' -- this allows to view posts of any user -- IDOR / broken access control
 
-3. On a user login, inject this into the url -->  ' UNION SELECT users.id, users.username, users.password, users.id, users.username FROM users LIMIT 1 OFFSET 0' OR ' UNION SELECT users.id, users.username, users.password, users.id, users.username FROM users LIMIT 1 OFFSET 1'
+3. On a user login, inject this into the url -->  ' **UNION SELECT users.id, users.username, users.password, users.id, users.username FROM users LIMIT 1 OFFSET 0' OR ' UNION SELECT users.id, users.username, users.password, users.id, users.username FROM users LIMIT 1 OFFSET 1**'
 This will leak the user id and password for the users sequentially -- Dump users by SQL injection in endpoints
  
-4. Create a post in any user account as -- content = <script>alert('XSS attack ! Attacker can send the session cookie to their machine. ');</script>
+4. Create a post in any user account as -- content = **<script>alert('XSS attack ! Attacker can send the session cookie to their machine. ');</script>**
  Classic XSS since the view content mode has XSS sink enabled ( | safe )
 
 ## To Fix the code we will make changes in some of our code to secure the webapp. 
