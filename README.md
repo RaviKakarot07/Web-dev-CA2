@@ -1,7 +1,7 @@
 # Web-dev-CA2
 Repository for Web development CA2. 
 
-Project Developed by Ravi Rameshkumar Mishra. 
+Project Developed by Ravi Rameshkumar Mishra.
 Project Demo available at -- https://youtu.be/W3WhnCmpCLQ
 
 The project has a basic functionality of storing posts/thoughts by users who create an account on the webpage. Any user who wants to use the functionality can sign-up on the page and start their usage. 
